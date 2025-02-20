@@ -37,7 +37,6 @@ INSTALLED_APPS = [
 
     #installedpackages
     'rest_framework',
-    'rest_framework_simplejwt',
     #myapps
     'authentication',
     
@@ -54,7 +53,7 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
-    "UPDATE_LAST_LOGIN": False,
+    "UPDATE_LAST_LOGIN": False, 
 
     "ALGORITHM": "HS256",
     "SIGNING_KEY": SECRET_KEY,

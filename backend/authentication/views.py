@@ -36,14 +36,16 @@ class UserLogin(APIView):
             'user': user.username,
         })
         secret_key = os.getenv('JWT_SECRET_KEY')
-        token_init = generate_jwt_token(secret_key)
-        token  = token_init.create_token(user)
-
-        response.set_cookie(key='access_token', value=token, httponly=True, path='/')
+        access_token = generate_access_token(secret_key)
+        refresh_token = generate_refresh_token(secret_key)
+        access_token  = access_token.create_token(user)
+        refresh_token = refresh_token.create_token(user)
+        response.set_cookie(key='refresh_token', value=refresh_token, httponly=False, path='/')
+        response.set_cookie(key='access_token', value=access_token, httponly=False, path='/')
         return response
         
         
-class generate_jwt_token:
+class generate_access_token:
 
 
     def __init__(self, secret):
@@ -53,13 +55,40 @@ class generate_jwt_token:
 
         header = {
             'alg': 'HS256',
-            'typ': 'JWT',
+            'typ': 'access',
         }
 
         payload = {
             'user_id': user.id,
             'username': user.username,
             'exp' : f'{datetime.datetime.utcnow() + datetime.timedelta(minutes=5)}'
+
+        }
+        header = base64.urlsafe_b64encode(json.dumps(header).encode('utf-8'))
+        payload = base64.urlsafe_b64encode(json.dumps(payload).encode('utf-8'))
+        sign_input = f'{header}.{payload}'.encode('utf-8')
+        hash_object = hmac.new(f'{self.secret_key}'.encode('utf-8'), sign_input, hashlib.sha256).digest()
+        signature = base64.urlsafe_b64encode(hash_object).decode('utf-8')
+        token = f'{header}.{payload}.{signature}'
+        return token
+
+class generate_refresh_token:
+
+
+    def __init__(self, secret):
+        self.secret_key = secret
+        
+    def create_token(self, user):
+
+        header = {
+            'alg': 'HS256',
+            'typ': 'refresh',
+        }
+
+        payload = {
+            'user_id': user.id,
+            'username': user.username,
+            'exp' : f'{datetime.datetime.utcnow() + datetime.timedelta(days=120)}'
 
         }
         header = base64.urlsafe_b64encode(json.dumps(header).encode('utf-8').replace(b'=', b''))

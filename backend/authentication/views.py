@@ -64,11 +64,11 @@ class generate_access_token:
             'exp' : f'{datetime.datetime.utcnow() + datetime.timedelta(minutes=5)}'
 
         }
-        header = base64.urlsafe_b64encode(json.dumps(header).encode('utf-8'))
-        payload = base64.urlsafe_b64encode(json.dumps(payload).encode('utf-8'))
+        header = base64.urlsafe_b64encode(json.dumps(header).encode('utf-8')).decode('utf-8').replace('=', '')
+        payload = base64.urlsafe_b64encode(json.dumps(payload).encode('utf-8')).decode('utf-8').replace('=', '')
         sign_input = f'{header}.{payload}'.encode('utf-8')
         hash_object = hmac.new(f'{self.secret_key}'.encode('utf-8'), sign_input, hashlib.sha256).digest()
-        signature = base64.urlsafe_b64encode(hash_object).decode('utf-8')
+        signature = base64.urlsafe_b64encode(hash_object).decode('utf-8').replace('=', '')
         token = f'{header}.{payload}.{signature}'
         return token
 
@@ -91,10 +91,10 @@ class generate_refresh_token:
             'exp' : f'{datetime.datetime.utcnow() + datetime.timedelta(days=120)}'
 
         }
-        header = base64.urlsafe_b64encode(json.dumps(header).encode('utf-8').replace(b'=', b''))
-        payload = base64.urlsafe_b64encode(json.dumps(payload).encode('utf-8').replace(b'=', b''))
+        header = base64.urlsafe_b64encode(json.dumps(header).encode('utf-8')).decode('utf-8').replace('=', '')
+        payload = base64.urlsafe_b64encode(json.dumps(payload).encode('utf-8')).decode('utf-8').replace('=', '')
         sign_input = f'{header}.{payload}'.encode('utf-8')
-        hash_object = hmac.new(self.secret_key.encode('utf-8'), sign_input, hashlib.sha256).digest()
+        hash_object = hmac.new(f'{self.secret_key}'.encode('utf-8'), sign_input, hashlib.sha256).digest()
         signature = base64.urlsafe_b64encode(hash_object).decode('utf-8').replace('=', '')
         token = f'{header}.{payload}.{signature}'
         return token

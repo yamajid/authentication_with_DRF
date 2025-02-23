@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from .serializers import UserSerializer
 from dotenv import load_dotenv
-import base64, json, datetime, jwt, os, hmac, hashlib
+import datetime, jwt, os
 
 User = get_user_model()
 load_dotenv()
@@ -50,26 +50,19 @@ class generate_access_token:
 
     def __init__(self, secret):
         self.secret_key = secret
+        print(self.secret_key)
         
     def create_token(self, user):
 
-        header = {
-            'alg': 'HS256',
-            'typ': 'access',
-        }
-
         payload = {
+            'type': 'access',
             'user_id': user.id,
             'username': user.username,
-            'exp' : f'{datetime.datetime.utcnow() + datetime.timedelta(minutes=5)}'
+            'iat': datetime.datetime.utcnow(),
+            'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=5)
 
         }
-        header = base64.urlsafe_b64encode(json.dumps(header).encode('utf-8')).decode('utf-8').replace('=', '')
-        payload = base64.urlsafe_b64encode(json.dumps(payload).encode('utf-8')).decode('utf-8').replace('=', '')
-        sign_input = f'{header}.{payload}'.encode('utf-8')
-        hash_object = hmac.new(f'{self.secret_key}'.encode('utf-8'), sign_input, hashlib.sha256).digest()
-        signature = base64.urlsafe_b64encode(hash_object).decode('utf-8').replace('=', '')
-        token = f'{header}.{payload}.{signature}'
+        token = jwt.encode(payload, self.secret_key)
         return token
 
 class generate_refresh_token:
@@ -77,26 +70,20 @@ class generate_refresh_token:
 
     def __init__(self, secret):
         self.secret_key = secret
+        print(self.secret_key)
+
         
     def create_token(self, user):
 
-        header = {
-            'alg': 'HS256',
-            'typ': 'refresh',
-        }
-
         payload = {
+            'type': 'refresh',
             'user_id': user.id,
             'username': user.username,
-            'exp' : f'{datetime.datetime.utcnow() + datetime.timedelta(days=120)}'
+            'iat': datetime.datetime.utcnow(),
+            'exp' : datetime.datetime.utcnow() + datetime.timedelta(days=120)
 
         }
-        header = base64.urlsafe_b64encode(json.dumps(header).encode('utf-8')).decode('utf-8').replace('=', '')
-        payload = base64.urlsafe_b64encode(json.dumps(payload).encode('utf-8')).decode('utf-8').replace('=', '')
-        sign_input = f'{header}.{payload}'.encode('utf-8')
-        hash_object = hmac.new(f'{self.secret_key}'.encode('utf-8'), sign_input, hashlib.sha256).digest()
-        signature = base64.urlsafe_b64encode(hash_object).decode('utf-8').replace('=', '')
-        token = f'{header}.{payload}.{signature}'
+        token = jwt.encode(payload, self.secret_key)
         return token
      
 

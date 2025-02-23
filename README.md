@@ -15,6 +15,20 @@ A custom implementation of JWT (JSON Web Token) authentication(login, register, 
 - **Payload**: User Data & Claims
 - **Signature**: Encrypted Verification
 
+### Token Generation Process
+```python
+    
+    # Encode header and payload
+        header = base64.urlsafe_b64encode(json.dumps(header).encode('utf-8')).decode('utf-8').replace('=', '')
+        payload = base64.urlsafe_b64encode(json.dumps(payload).encode('utf-8')).decode('utf-8').replace('=', '')
+        sign_input = f'{header}.{payload}'.encode('utf-8')
+        hash_object = hmac.new(f'{self.secret_key}'.encode('utf-8'), sign_input, hashlib.sha256).digest()
+        signature = base64.urlsafe_b64encode(hash_object).decode('utf-8').replace('=', '')
+        token = f'{header}.{payload}.{signature}'
+    
+    return token
+```
+
 ## 💻 Technical Implementation
 
 ### Security Features
@@ -102,23 +116,9 @@ python manage.py runserver
 
 ## 👤 Author
 - Created by: @yamajid
-- Last Updated: 2025-02-23 11:43:11 UTC
 
-## 📚 Documentation
 
-### Token Generation Process
-```python
-    
-    # Encode header and payload
-        header = base64.urlsafe_b64encode(json.dumps(header).encode('utf-8')).decode('utf-8').replace('=', '')
-        payload = base64.urlsafe_b64encode(json.dumps(payload).encode('utf-8')).decode('utf-8').replace('=', '')
-        sign_input = f'{header}.{payload}'.encode('utf-8')
-        hash_object = hmac.new(f'{self.secret_key}'.encode('utf-8'), sign_input, hashlib.sha256).digest()
-        signature = base64.urlsafe_b64encode(hash_object).decode('utf-8').replace('=', '')
-        token = f'{header}.{payload}.{signature}'
-    
-    return token
-```
+
 
 
 

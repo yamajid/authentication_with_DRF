@@ -28,8 +28,8 @@ A custom implementation of JWT (JSON Web Token) authentication(login, register, 
 ```python
 urlpatterns = [
     path('api/user/login', UserLogin.as_view()),
-    path('api/api/register/', UserRegister.as_view()),
-    path('api/api/logout/', UserLogout.as_view()),
+    path('api/register/', UserRegister.as_view()),
+    path('api/logout/', UserLogout.as_view()),
 ]
 ```
 

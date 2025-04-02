@@ -40,8 +40,8 @@ class UserLogin(APIView):
         refresh_token = generate_refresh_token(secret_key)
         access_token  = access_token.create_token(user)
         refresh_token = refresh_token.create_token(user)
-        response.set_cookie(key='refresh_token', value=refresh_token, httponly=False, path='/')
-        response.set_cookie(key='access_token', value=access_token, httponly=False, path='/')
+        response.set_cookie(key='refresh_token', value=refresh_token, httponly=True, path='/')
+        response.set_cookie(key='access_token', value=access_token, httponly=True, path='/')
         return response
         
         

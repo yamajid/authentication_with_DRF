@@ -59,14 +59,6 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-
-### Environment Variables
-```env
-SECRET_KEY=your-secret-key
-ACCESS_TOKEN_LIFETIME=3600
-REFRESH_TOKEN_LIFETIME=604800
-```
-
 ## 📝 Project Structure
 ```
 custom_jwt_auth/
